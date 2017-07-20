@@ -1,10 +1,16 @@
 var alexa = require("alexa-app"),
-	money = require("./money.min.js"),
+	money = require("money"),
 	request = require("request");
 
 // App constants
 const arn = "arn:aws:lambda:us-east-1:063487698133:function:CurrencyConverter";
-const currency_codes = ['AUD', 'CAD', 'CHF', 'CYP', 'CZK', 'DKK', 'EEK', 'GBP', 'HKD', 'HUF', 'ISK', 'JPY', 'KRW', 'LTL', 'LVL', 'MTL', 'NOK', 'NZD', 'PLN', 'ROL', 'SEK', 'SGD', 'SIT', 'SKK', 'TRL', 'USD', 'ZAR'];
+const currency_codes = ["USD", "GBP", "EUR", "RMB"]; //['AUD', 'CAD', 'CHF', 'CYP', 'CZK', 'DKK', 'EEK', 'GBP', 'HKD', 'HUF', 'ISK', 'JPY', 'KRW', 'LTL', 'LVL', 'MTL', 'NOK', 'NZD', 'PLN', 'ROL', 'SEK', 'SGD', 'SIT', 'SKK', 'TRL', 'USD', 'ZAR']; 
+const codes_to_names = {
+	'GBP': 'pound',
+	'USD': 'dollar',
+	'RMB': 'chunese yuan',
+}
+
 var app = new alexa.app();
 
 app.launch(function(request, response) {
@@ -14,7 +20,7 @@ app.launch(function(request, response) {
 	response.shouldEndSession(false);
 });
 
-// Help Intent
+// Amazon pre-built intents
 app.intent("AMAZON.HelpIntent",{
   "slots": {},
   "utterances": []
@@ -26,26 +32,49 @@ app.intent("AMAZON.HelpIntent",{
   	return
 });
 
+app.intent("AMAZON.StopIntent",{
+  "slots": {},
+  "utterances": []
+}, function(request, response) {
+  	var stopOutput = "Okay.";
+  	response.say(stopOutput)
+  	return
+});
+
+app.intent("AMAZON.CancelIntent",{
+  "slots": {},
+  "utterances": []
+}, function(request, response) {
+  	var cancelOutput = "No problem. Request cancelled.";
+  	response.say(cancelOutput);
+  	return
+});
+
+// Convert currency intent
 app.intent(
 	"ConvertCurrency",
 	{
 		slots: { 
 			"amount": "AMAZON.NUMBER",
-			"from_currency": [
-
-			],
-			"to_currency": ""
+			"from_currency": currency_codes,//["dollars", "RMB", "euros", "pounds"],
+			"to_currency": currency_codes//["dollars", "RMB", "euros", "pounds"],
 		},
-		utterances: ["Convert 100 dollars to RMB."]
+		utterances: [
+			"Convert {amount} {from_currency} to {to_currency}",
+			"How much is {amount} {from_currency} in {to_currency}",
+		]
 	},
 	function(request, response) {
-		ConvertCurrency(response);
+		var amount = request.slot("amount");
+		var from = request.slot("from_currency");
+		var to = request.slot("to_currency");
+		ConvertCurrency(response, amount, from, to);
 		return;
 	}
 );
 
-function ConvertCurrency(response) {
-	var converted = Math.round(money.convert(100, {from: "USD", to: "CNY"}));
+function ConvertCurrency(response, amount, from, to) {
+	var converted = Math.round(money.convert(amount, {from: from, to: to}));
 	response.say(converted.toString());
 	response.send();
 	return;

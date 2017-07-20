@@ -28,6 +28,7 @@
   "homepage": "https://github.com/sc1f/alexa-currency-converter#readme",
   "dependencies": {
     "alexa-app": "^4.0.1",
+    "money": "^0.2.0",
     "request": "^2.81.0"
   }
 }
