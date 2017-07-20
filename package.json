@@ -1,0 +1,33 @@
+{
+  "name": "alexa-currency-converter",
+  "version": "0.0.1",
+  "description": "convert currencies from within alexa",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sc1f/alexa-currency-converter.git"
+  },
+  "keywords": [
+    "alexa",
+    "skill",
+    "currency",
+    "converter",
+    "echo",
+    "amazon",
+    "echo",
+    "dot"
+  ],
+  "author": "Jun Tan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sc1f/alexa-currency-converter/issues"
+  },
+  "homepage": "https://github.com/sc1f/alexa-currency-converter#readme",
+  "dependencies": {
+    "alexa-app": "^4.0.1",
+    "request": "^2.81.0"
+  }
+}
