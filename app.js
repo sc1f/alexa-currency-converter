@@ -1,11 +1,10 @@
 var alexa = require("alexa-app"),
+	money = require("./money.min.js"),
 	request = require("request");
 
 // App constants
 const arn = "arn:aws:lambda:us-east-1:063487698133:function:CurrencyConverter";
-const fixer = "http://api.fixer.io/latest";
-var currencies = ["USD", "RMB", "EUR", "Dollar", "Yuan", "Euro"];
-
+const currency_codes = ['AUD', 'CAD', 'CHF', 'CYP', 'CZK', 'DKK', 'EEK', 'GBP', 'HKD', 'HUF', 'ISK', 'JPY', 'KRW', 'LTL', 'LVL', 'MTL', 'NOK', 'NZD', 'PLN', 'ROL', 'SEK', 'SGD', 'SIT', 'SKK', 'TRL', 'USD', 'ZAR'];
 var app = new alexa.app();
 
 app.launch(function(request, response) {
@@ -32,24 +31,22 @@ app.intent(
 	{
 		slots: { 
 			"amount": "AMAZON.NUMBER",
-			"from_currency": "",
+			"from_currency": [
+
+			],
 			"to_currency": ""
 		},
 		utterances: ["Convert 100 dollars to RMB."]
 	},
 	function(request, response) {
-		convert_currency(response);
+		ConvertCurrency(response);
 		return;
 	}
 );
 
-
-function convert_currency(response) {
-	request(fixer, function (error, response, body) {
-		body = JSON.parse(body);
-		var rates = body.rates;
-	});
-	response.say("That's 100 dollars!");
+function ConvertCurrency(response) {
+	var converted = Math.round(money.convert(100, {from: "USD", to: "CNY"}));
+	response.say(converted.toString());
 	response.send();
 	return;
 }
